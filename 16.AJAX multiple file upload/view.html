@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Upload</title>
+    <script src="/static/jquery-3.7.1.min.js"></script>
+    <script>
+        $("#user-form").on("submit", function (e){
+            e.preventDefault();
+
+            var $self = $(this);
+            var files = $("#upload-file")[0].files;
+            var formData = new FormData();
+
+            for (var i = 0; i < files.length; i++){
+                formData.append("files", files[i])
+            }
+
+            $.ajax({
+                url: $self.attr("action"),
+                type: $self.attr("method"),
+                data: formData,
+                processData: false,
+                contentType: false,
+            }).then(function (res) {
+                alert(res);
+                $("#user-form").trigger("reset");
+            }).catch(function (a) {
+                alert("ERROR: " + a.responseText);
+            });
+        });
+    </script>
+</head>
+<body>
+    <form action="/upload" id="user-form" method="POST" enctype="multipart/form-data" > <!-- aneh, katanya contenttype false supaya contenttype-nya bisa nyesuain, tapi waktu di trial dan di cek, contenttype-nya application/x-www-form-urlencoded, padahal udah di setting false dan setelah beberapa kali reseach belum nemu dan satu satunya solusin untuk sementara adalah menulis enctype-nya secara manual, huft-->
+        <input require multiple id="upload-file" type="file" />
+        <br />
+        <button id="btn-upload" type="submit">Upload!</button>
+    </form>
+</body>
+</html>
